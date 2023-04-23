@@ -28,11 +28,12 @@ namespace War_strategy_optimization
         private double[] upper_limit;
         private double[] lower_limit;
         private double[] temp_arguments;
+        private double temp_result;
 
         public delegate double tested_function(params double[] arg);
         private tested_function f;
 
-        public WSO(int n_iterations, int n_population, int n_dimensions, int n_of_calls, int current_iteration, tested_function f, double p_param=0.5)
+        public WSO(int n_iterations, int n_population, int n_dimensions, int n_of_calls, int current_iteration, tested_function f, double p_param = 0.5)
         {
             this.n_iterations = n_iterations;
             this.n_population = n_population;
@@ -55,5 +56,44 @@ namespace War_strategy_optimization
                 this.arguments[i] = new double[n_dimensions];
             }
         }
+
+        bool should_it_be_replaced(int i)
+        {
+            if (temp_result > results[i])
+            {
+                return true;
+            }
+            else { return false; }
+        }
+
+        void replacing(int i)
+        {
+            for (int j = 0; j < n_dimensions; j++)
+            {
+                arguments[i][j] = temp_arguments[j];
+            }
+            results[i] = temp_result;
+        }
+
+        void creating_random_soldier()
+        {
+            for (int i = 0; i < n_dimensions; i++)
+            {
+                Random rand = new Random();
+                temp_arguments[i] = lower_limit[i] + rand.NextDouble() * (upper_limit[i] - lower_limit[i]);
+            }
+            temp_result = f(temp_arguments);
+        }
+
+        void creating_initial_population()
+        {
+            for (int i = 0; i < n_population; i++)
+            {
+                creating_random_soldier();
+                replacing(i);
+            }
+        }
+
+
     }
 }
