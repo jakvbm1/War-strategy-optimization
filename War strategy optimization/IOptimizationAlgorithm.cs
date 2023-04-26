@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace War_strategy_optimization
 {
-    namespace Tuna_Swarm_Optimization
-    {
+
         interface IOptimizationAlgorithm
         {
             // Metoda zaczynająca rozwiązywanie zagadnienia poszukiwania minimum funkcji celu
@@ -34,6 +33,4 @@ namespace War_strategy_optimization
             // Właściwość zwracająca liczbę wywołań funkcji dopasowania (celu)
             int NumberOfEvaluationFitnessFunction { get; }
         }
-    }
-
 }
