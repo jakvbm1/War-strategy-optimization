@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
-using War_strategy_optimization.Tuna_Swarm_Optimization;
+using War_strategy_optimization;
 
 namespace War_strategy_optimization
 {
@@ -13,7 +14,7 @@ namespace War_strategy_optimization
         public int n_iterations;
         public int n_population;
         public int n_dimensions;
-        public int n_of_calls;
+        public int n_of_calls = 0;
         public int current_iteration;
         public double p_param;
 
@@ -36,8 +37,13 @@ namespace War_strategy_optimization
         public delegate double tested_function(params double[] arg);
         private tested_function f;
 
-        private int n_of_calls = 0;
         private string file_name = "WSO_in_work.txt";
+
+        public double[] XBest => king_arguments ;
+
+        public double FBest => king_result;
+
+        public int NumberOfEvaluationFitnessFunction => n_of_calls;
 
         public WSO(int n_iterations, int n_population, int n_dimensions, int n_of_calls, tested_function f, double p_param = 0.5)
         {
@@ -72,8 +78,8 @@ namespace War_strategy_optimization
             if (temp_result > results[i])
             {
                 ranks[i]++;
-                double inside_pow = 1 - (ranks[i] / n_iterations)
-            weights[i] = weights[i] * Math.Pow(inside_pow, 1)//w artykule jest do potegi alfa ale nie udalo mi sie jeszcze znalezc co to alfa oznacza
+                double inside_pow = 1 - (ranks[i] / n_iterations);
+            weights[i] = weights[i] * Math.Pow(inside_pow, 1);//w artykule jest do potegi alfa ale nie udalo mi sie jeszcze znalezc co to alfa oznacza
                 return true;
             }
             else { return false; }
@@ -113,7 +119,7 @@ namespace War_strategy_optimization
         {
             int kings_number = 0;
             int commanders_number = 0;
-            for (int i = 0 i <n_population; i++)
+            for (int i = 0; i <n_population; i++)
             {
                 if (results[i] < results[kings_number])
                 {
@@ -125,7 +131,7 @@ namespace War_strategy_optimization
             for (int i=0; i < n_dimensions; i++)
             {
                 king_arguments[i] = results[kings_number];
-                commader_arguments[i] = results[commanders_number];
+                commander_arguments[i] = results[commanders_number];
             }
 
             king_result = results[kings_number];
@@ -134,11 +140,11 @@ namespace War_strategy_optimization
 
         void attack_exploitation(int transformed_num, double p)
         {
-            Random rand;
+            Random rand = new Random();
             for (int i=0; i<n_dimensions;i++)
             {
                 temp_arguments[i] = arguments[transformed_num][i] + 2 * p * (commander_arguments[i] - king_arguments[i])
-                + rand.NextDouble() * (weights[transformed_num]*king_arguments - arguments[transformed_num][i]);
+                + rand.NextDouble() * (weights[transformed_num] * king_arguments[i] - arguments[transformed_num][i]);
             }
             if(should_it_be_replaced(transformed_num))
             {
@@ -172,7 +178,7 @@ namespace War_strategy_optimization
             double[] copied_arguments = new double[n_population];
             for (int j=0; j<n_population; j++)
             {
-                copied_arguments = arguments[j][i];
+                copied_arguments[j] = arguments[j][i];
             }
 
             for (int j=0; j<n_population; j++)
@@ -190,18 +196,18 @@ namespace War_strategy_optimization
 
             if (n_population % 2 ==1)
             {
-                return copied_arguments((n_population - 1) / 2 + 1);
+                return copied_arguments[(n_population - 1) / 2 + 1];
             }
 
-            else if (n_population%2 ==0)
+            else 
             {
-                return (copied_arguments(n_population / 2) + copied_arguments(n_population / 2 + 1)) / 2;
+                return (copied_arguments[(n_population / 2)] + copied_arguments[(n_population / 2 + 1)]) / 2;
             }
         }
 
         void relocating_the_weak()
         {
-            Random rand;
+            Random rand = new Random();
             int the_weakest = 0;
             for (int i=0; i<n_population; i++)
             {
@@ -213,21 +219,20 @@ namespace War_strategy_optimization
 
             for (int i=0; i<n_dimensions; i++)
             {
-                arguments[the_weakest][i] = -(1-rand.NextDouble()) * (arguments[the_weakest][i] - median[i]) + king_arguments[i];
+                arguments[the_weakest][i] = -(1-rand.NextDouble()) * (arguments[the_weakest][i] - median(i) + king_arguments[i]);
             }
 
             results[the_weakest] = f(arguments[the_weakest]);
 
         }
-
-        void SaveToFileStateOfAlghoritm()
+        public void SaveToFileStateOfAlghoritm()
         {
             StreamWriter sw = File.CreateText(file_name);
             sw.WriteLine(n_of_calls);
             sw.WriteLine(current_iteration);
 
-            sw.Write(king_result+", ");
-            for (int i=0; i<n_dimensions; i++)
+            sw.Write(king_result + ", ");
+            for (int i = 0; i < n_dimensions; i++)
             {
                 sw.Write(king_arguments[i] + ", ");
             }
@@ -240,17 +245,17 @@ namespace War_strategy_optimization
             }
             sw.Write('\n');
 
-            for (int i=0; i < n_population; i++)
+            for (int i = 0; i < n_population; i++)
             {
                 sw.Write(results[i] + ", ");
-                for (int j=0; j<n_dimensions; j++)
+                for (int j = 0; j < n_dimensions; j++)
                 {
                     sw.Write(arguments[i][j] + ", ");
                 }
                 sw.Write('\n');
             }
 
-            for(int i=0; i<n_population; i++)
+            for (int i = 0; i < n_population; i++)
             {
                 sw.Write(ranks[i]);
             }
@@ -262,9 +267,9 @@ namespace War_strategy_optimization
             sw.Close();
         }
 
-        void LoadFromFileStateOfAlghoritm()
+        public void LoadFromFileStateOfAlghoritm()
         {
-            if(File.Exists(file_name))
+            if (File.Exists(file_name))
             {
                 StreamReader sr = new StreamReader(file_name);
                 string line = "";
@@ -279,40 +284,40 @@ namespace War_strategy_optimization
                 string[] numbers = line.Split(", ");
 
                 king_result = Convert.ToDouble(numbers[0]);
-                for(int i=0; i<n_dimensions; i++)
+                for (int i = 0; i < n_dimensions; i++)
                 {
                     king_arguments[i] = Convert.ToDouble(numbers[1 + i]);
                 }
 
                 line = sr.ReadLine();
-                string[] numbers = line.Split(", ");
+                numbers = line.Split(", ");
 
                 commander_result = Convert.ToDouble(numbers[0]);
                 for (int i = 0; i < n_dimensions; i++)
                 {
                     commander_arguments[i] = Convert.ToDouble(numbers[1 + i]);
                 }
-                for (int i=0; i<n_population; i++)
+                for (int i = 0; i < n_population; i++)
                 {
                     line = sr.ReadLine();
-                    string[] numbers = line.Split(", ");
+                    numbers = line.Split(", ");
 
                     results[i] = Convert.ToDouble(numbers[0]);
-                    for(int j=0; j<n_dimensions; j++)
+                    for (int j = 0; j < n_dimensions; j++)
                     {
                         arguments[i][j] = Convert.ToDouble(numbers[1 + j]);
                     }
 
                 }
                 line = sr.ReadLine();
-                string[] numbers = line.Split(", ");
-                for(int i=0; i < n_population; i++)
+                numbers = line.Split(", ");
+                for (int i = 0; i < n_population; i++)
                 {
                     ranks[i] = Convert.ToDouble(numbers[i]);
                 }
 
                 line = sr.ReadLine();
-                string[] numbers = line.Split(", ");
+                numbers = line.Split(", ");
                 for (int i = 0; i < n_population; i++)
                 {
                     weights[i] = Convert.ToDouble(numbers[i]);
@@ -322,7 +327,12 @@ namespace War_strategy_optimization
 
         }
 
-        double Solve()
+        public void SaveResult()
+        {
+            throw new NotImplementedException();
+        }
+
+        public double Solve()
         {
             LoadFromFileStateOfAlghoritm();
             if (current_iteration == 0)
@@ -330,13 +340,13 @@ namespace War_strategy_optimization
                 creating_initial_population();
             }
             finding_king_and_commander();
-            Random rand;
-            int ci = current_iteration;
-            for (ci; ci>n_iterations; ci++)
+            Random rand = new Random();
+
+            for (int ci = current_iteration; ci > n_iterations; ci++)
             {
-                for (int i=0; i<n_population; i++)
+                for (int i = 0; i < n_population; i++)
                 {
-                    double p  = rand.NextDouble();
+                    double p = rand.NextDouble();
                     if (p < p_param)
                     {
                         defense_exploration(i, p);
@@ -344,7 +354,7 @@ namespace War_strategy_optimization
 
                     else
                     {
-                        atack_exploitation(i, p);
+                        attack_exploitation(i, p);
                     }
                 }
                 finding_king_and_commander();
@@ -353,8 +363,5 @@ namespace War_strategy_optimization
             }
             return king_result;
         }
-
-
-
     }
 }
