@@ -226,10 +226,10 @@ namespace War_strategy_optimization
             sw.WriteLine(n_of_calls);
             sw.WriteLine(current_iteration);
 
-            sw.Write(king_result);
+            sw.Write(king_result+", ");
             for (int i=0; i<n_dimensions; i++)
             {
-                sw.Write(king_arguments[i]);
+                sw.Write(king_arguments[i] + ", ");
             }
             sw.Write('\n');
 
@@ -260,6 +260,31 @@ namespace War_strategy_optimization
                 sw.Write(weights[i]);
             }
             sw.Write('\n');
+        }
+
+        void LoadFromFileStateOfAlghoritm()
+        {
+            if(File.Exists(file_name))
+            {
+                StreamReader sr = new StreamReader(file_name);
+                string line = "";
+
+                line = sr.ReadLine();
+                n_of_calls = Convert.ToInt32(line)
+
+                line = sr.ReadLine();
+                current_iteration = Convert.ToInt32(line)
+
+                line = sr.ReadLine();
+                string[] numbers = line.Split(", ")
+                king_result = Convert.ToDouble(numbers[0]);
+
+                for(int i=0; i<n_dimensions; i++)
+                {
+                    king_arguments[i] = Convert.ToDouble(numbers[1 + i]);
+                }
+            }
+
         }
 
         double Solve()
