@@ -259,7 +259,7 @@ namespace War_strategy_optimization
             {
                 sw.Write(weights[i]);
             }
-            sw.Write('\n');
+            sw.Close();
         }
 
         void LoadFromFileStateOfAlghoritm()
@@ -270,26 +270,65 @@ namespace War_strategy_optimization
                 string line = "";
 
                 line = sr.ReadLine();
-                n_of_calls = Convert.ToInt32(line)
+                n_of_calls = Convert.ToInt32(line);
 
                 line = sr.ReadLine();
-                current_iteration = Convert.ToInt32(line)
+                current_iteration = Convert.ToInt32(line);
 
                 line = sr.ReadLine();
-                string[] numbers = line.Split(", ")
+                string[] numbers = line.Split(", ");
+
                 king_result = Convert.ToDouble(numbers[0]);
-
                 for(int i=0; i<n_dimensions; i++)
                 {
                     king_arguments[i] = Convert.ToDouble(numbers[1 + i]);
                 }
+
+                line = sr.ReadLine();
+                string[] numbers = line.Split(", ");
+
+                commander_result = Convert.ToDouble(numbers[0]);
+                for (int i = 0; i < n_dimensions; i++)
+                {
+                    commander_arguments[i] = Convert.ToDouble(numbers[1 + i]);
+                }
+                for (int i=0; i<n_population; i++)
+                {
+                    line = sr.ReadLine();
+                    string[] numbers = line.Split(", ");
+
+                    results[i] = Convert.ToDouble(numbers[0]);
+                    for(int j=0; j<n_dimensions; j++)
+                    {
+                        arguments[i][j] = Convert.ToDouble(numbers[1 + j]);
+                    }
+
+                }
+                line = sr.ReadLine();
+                string[] numbers = line.Split(", ");
+                for(int i=0; i < n_population; i++)
+                {
+                    ranks[i] = Convert.ToDouble(numbers[i]);
+                }
+
+                line = sr.ReadLine();
+                string[] numbers = line.Split(", ");
+                for (int i = 0; i < n_population; i++)
+                {
+                    weights[i] = Convert.ToDouble(numbers[i]);
+                }
+                sr.Close();
             }
 
         }
 
         double Solve()
         {
-            creating_initial_population();
+            LoadFromFileStateOfAlghoritm();
+            if (current_iteration == 0)
+            {
+                creating_initial_population();
+            }
             finding_king_and_commander();
             Random rand;
             int ci = current_iteration;
@@ -310,6 +349,7 @@ namespace War_strategy_optimization
                 }
                 finding_king_and_commander();
                 relocating_the_weak();
+                SaveToFileStateOfAlghoritm();
             }
             return king_result;
         }
