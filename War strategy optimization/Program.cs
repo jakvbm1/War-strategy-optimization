@@ -152,22 +152,49 @@ namespace War_strategy_optimization
             int[] iterations = { 5, 10, 20, 50 };
             int[] population = { 10, 15, 20, 50, 100 };
 
-            int j = 3;
-            int d = 0;
-            double[] upper_lim = new double[dimensions[d]];
-            double[] lower_lim = new double[dimensions[d]];
-
-            for (int i = 0; i < dimensions[d]; i++)
-            {
-                upper_lim[i] = 0;
-                lower_lim[i] = 0;
-            }
+            //int j = 0;
+            //int d = 0;
+            //int p = 0
+            
 
             setting_limits(ref upper_lim, ref lower_lim, dimensions[d]);
 
-            WSO wso_test = new WSO(iterations[j], population[0], dimensions[d], Rastrigin_function);
-            wso_test.limit_setter(lower_lim, upper_lim);
-            wso_test.Solve();
+            for(int a=0; a <5; a++)
+            {
+                double[] upper_lim = new double[dimensions[a]];
+                double[] lower_lim = new double[dimensions[a]];
+
+                for (int i = 0; i < dimensions[a]; i++)
+                {
+                    upper_lim[i] = 0;
+                    lower_lim[i] = 0;
+                }
+
+                for (int b=0; b <4; b++)
+                {
+                    for (int c=0; c <5; c++)
+                    {
+                        string end_file = "C:\\" + dimensions[a].ToString + iterations[b].ToString + population[c].ToString() + "END_RESULT.txt";
+                        StreamWriter sw = File.CreateText(end_file);
+                        for (int e=0; e <10; e++)
+                        {
+                            WSO wso_test = new WSO(iterations[a], population[b], dimensions[c], Rastrigin_function);
+                            wso_test.limit_setter(lower_lim, upper_lim);
+                            wso_test.Solve();
+                        }
+                    }
+                }
+            }
+
+
+            
+            
+
+
+
+
+
+            
         }
     }
 }

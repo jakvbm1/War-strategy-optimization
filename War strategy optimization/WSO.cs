@@ -38,8 +38,8 @@ namespace War_strategy_optimization
         public delegate double tested_function(params double[] arg);
         private tested_function f;
 
-        private string file_name = "D:\\WSO_in_work.txt";
-        private string file_name_end = "D:\\WSO_result.txt";
+        private string file_name = "C:\\WSO_in_work.txt";
+        private string file_name_end = "C:\\WSO_result.txt";
 
         public double[] XBest => king_arguments ;
 
