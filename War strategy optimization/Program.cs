@@ -157,7 +157,7 @@ namespace War_strategy_optimization
             //int p = 0
             
 
-            setting_limits(ref upper_lim, ref lower_lim, dimensions[d]);
+            
 
             for(int a=0; a <5; a++)
             {
@@ -170,18 +170,25 @@ namespace War_strategy_optimization
                     lower_lim[i] = 0;
                 }
 
+                setting_limits(ref upper_lim, ref lower_lim, dimensions[a]);
+
                 for (int b=0; b <4; b++)
                 {
                     for (int c=0; c <5; c++)
                     {
-                        string end_file = "C:\\" + dimensions[a].ToString + iterations[b].ToString + population[c].ToString() + "END_RESULT.txt";
-                        StreamWriter sw = File.CreateText(end_file);
+                        string end_file = "C:\\WSO\\END_RESULT";
+                        string st = "D"+dimensions[a].ToString();
+                        string st2 = "I"+iterations[b].ToString();
+                        string st3 = "P"+population[c].ToString();
+                        StreamWriter sw = File.CreateText(end_file+st+st2+st3+".txt");
                         for (int e=0; e <10; e++)
                         {
-                            WSO wso_test = new WSO(iterations[a], population[b], dimensions[c], Rastrigin_function);
+                            WSO wso_test = new WSO(iterations[b], population[c], dimensions[a], Rastrigin_function);
                             wso_test.limit_setter(lower_lim, upper_lim);
-                            wso_test.Solve();
+                            double to_save = wso_test.Solve();
+                            sw.WriteLine(to_save);
                         }
+                        sw.Close();
                     }
                 }
             }

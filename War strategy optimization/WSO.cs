@@ -38,8 +38,8 @@ namespace War_strategy_optimization
         public delegate double tested_function(params double[] arg);
         private tested_function f;
 
-        private string file_name = "C:\\WSO_in_work.txt";
-        private string file_name_end = "C:\\WSO_result.txt";
+        private string file_name = "C:\\WSO\\WSO_in_work.txt";
+        private string file_name_end = "C:\\WSO\\WSO_result.txt";
 
         public double[] XBest => king_arguments ;
 
@@ -284,12 +284,12 @@ namespace War_strategy_optimization
 
             for (int i = 0; i < n_population; i++)
             {
-                sw.Write(ranks[i]);
+                sw.Write(ranks[i]+", ");
             }
             sw.Write('\n');
             for (int i = 0; i < n_population; i++)
             {
-                sw.Write(weights[i]);
+                sw.Write(weights[i] + ", ");
             }
             sw.Close();
         }
