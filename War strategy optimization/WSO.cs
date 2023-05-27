@@ -38,8 +38,8 @@ namespace War_strategy_optimization
         public delegate double tested_function(params double[] arg);
         private tested_function f;
 
-        private string file_name = "C:\\WSO\\WSO_in_work.txt";
-        private string file_name_end = "C:\\WSO\\WSO_result.txt";
+        private string file_name = "WSO_in_work.txt";
+        private string file_name_end = "WSO_result.txt";
 
         public double[] XBest => king_arguments ;
 
@@ -258,33 +258,35 @@ namespace War_strategy_optimization
             sw.WriteLine(n_of_calls);
             sw.WriteLine(current_iteration);
 
-            sw.Write(king_result + ", ");
             for (int i = 0; i < n_dimensions; i++)
             {
                 sw.Write(king_arguments[i] + ", ");
             }
+            sw.Write(king_result);
             sw.Write('\n');
 
-            sw.Write(commander_result);
+
             for (int i = 0; i < n_dimensions; i++)
             {
-                sw.Write(commander_arguments[i]);
+                sw.Write(commander_arguments[i] + ", ");
             }
+            sw.Write(commander_result);
             sw.Write('\n');
 
             for (int i = 0; i < n_population; i++)
             {
-                sw.Write(results[i] + ", ");
+
                 for (int j = 0; j < n_dimensions; j++)
                 {
                     sw.Write(arguments[i][j] + ", ");
                 }
+                sw.Write(results[i]);
                 sw.Write('\n');
             }
 
             for (int i = 0; i < n_population; i++)
             {
-                sw.Write(ranks[i]+", ");
+                sw.Write(ranks[i] + ", ");
             }
             sw.Write('\n');
             for (int i = 0; i < n_population; i++)
@@ -292,6 +294,75 @@ namespace War_strategy_optimization
                 sw.Write(weights[i] + ", ");
             }
             sw.Close();
+
+            double[] r_to_save = new double[n_population];
+            double[][] args_to_save = new double[n_population][];
+            for (int i=0; i<n_population; i++)
+            {
+                args_to_save[i] = new double[n_dimensions];
+            }
+
+            for (int i=0; i<n_population; i++)
+            {
+                r_to_save[i] = results[i];
+                for (int j=0; j<n_dimensions; j++)
+                {
+                    args_to_save[i][j] = arguments[i][j];
+                }
+            }
+
+            for (int i = 0; i < n_population; i++)
+            {
+                for (int j=0; j<n_dimensions-1-i; j++)
+                {
+                    if (r_to_save[j] > r_to_save[j+1])
+                    {
+                        double temporary_d = r_to_save[j];
+                        r_to_save[j] = r_to_save[j+1];
+                        r_to_save[j+1] = temporary_d;
+
+                        for (int k=0; k<n_dimensions; k++)
+                        {
+                            double temporary_a = args_to_save[j][k];
+                            args_to_save[j][k] = args_to_save[j + 1][k];
+                            args_to_save[j + 1][k] = temporary_a;
+                        }
+                    }
+                }
+            }
+
+
+
+
+
+            string iter = current_iteration.ToString();
+            StreamWriter sw2 = File.CreateText("WSO_iteracja_" + iter + ".txt");
+            sw2.WriteLine(p_param);
+            sw2.WriteLine(alpha_param);
+            sw2.WriteLine(n_of_calls);
+            sw2.WriteLine(n_population);
+            sw2.WriteLine(n_iterations);
+            sw2.WriteLine(n_dimensions);
+
+            for (int i = 0;i < n_population; i++)
+            {
+                for (int j=0; j < n_dimensions; j++)
+                {
+                    
+                }
+            }
+
+
+            for (int i = 0; i < n_population; i++)
+            {
+                for (int j = 0; j < n_dimensions; j++)
+                {
+                    sw2.Write(args_to_save[i][j] + ", ");
+                }
+                sw2.Write(r_to_save[i]);
+                sw2.Write('\n');
+            }
+            sw2.Close();
         }
 
         public void LoadFromFileStateOfAlghoritm()
@@ -310,31 +381,34 @@ namespace War_strategy_optimization
                 line = sr.ReadLine();
                 string[] numbers = line.Split(", ");
 
-                king_result = Convert.ToDouble(numbers[0]);
+                
                 for (int i = 0; i < n_dimensions; i++)
                 {
-                    king_arguments[i] = Convert.ToDouble(numbers[1 + i]);
+                    king_arguments[i] = Convert.ToDouble(numbers[i]);
                 }
+                king_result = Convert.ToDouble(numbers[n_dimensions]);
 
                 line = sr.ReadLine();
                 numbers = line.Split(", ");
 
-                commander_result = Convert.ToDouble(numbers[0]);
+                
                 for (int i = 0; i < n_dimensions; i++)
                 {
-                    commander_arguments[i] = Convert.ToDouble(numbers[1 + i]);
+                    commander_arguments[i] = Convert.ToDouble(numbers[i]);
                 }
+                commander_result = Convert.ToDouble(numbers[n_dimensions]);
+
                 for (int i = 0; i < n_population; i++)
                 {
                     line = sr.ReadLine();
                     numbers = line.Split(", ");
 
-                    results[i] = Convert.ToDouble(numbers[0]);
+                    
                     for (int j = 0; j < n_dimensions; j++)
                     {
-                        arguments[i][j] = Convert.ToDouble(numbers[1 + j]);
+                        arguments[i][j] = Convert.ToDouble(numbers[j]);
                     }
-
+                    results[i] = Convert.ToDouble(numbers[n_dimensions]);
                 }
                 line = sr.ReadLine();
                 numbers = line.Split(", ");
@@ -357,11 +431,11 @@ namespace War_strategy_optimization
         public void SaveResult()
         {
             StreamWriter sw = File.CreateText(file_name_end);
-            sw.Write(king_result+", ");
             for (int i = 0; i<n_dimensions; i++)
             {
                 sw.Write(king_arguments[i] + ", ");
             }
+            sw.Write(king_result);
             sw.Write('\n');
             sw.WriteLine(p_param);
             sw.WriteLine(n_of_calls);
@@ -407,11 +481,12 @@ namespace War_strategy_optimization
                         attack_exploitation(i, p);
                     }
                     
-                    displaying_in_console(i);
+                    //displaying_in_console(i);
                 }
-                Console.Write('\n');
+               // Console.Write('\n');
                 finding_king_and_commander();
                 relocating_the_weak();
+                current_iteration = ci;
                 SaveToFileStateOfAlghoritm();
             }
             SaveResult();
