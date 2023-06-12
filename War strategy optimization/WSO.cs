@@ -167,6 +167,7 @@ namespace War_strategy_optimization
             {
                 temp_arguments[i] = arguments[transformed_num][i] + (2 * p * (commander_arguments[i] - king_arguments[i]))
                 + rand.NextDouble() * ((weights[transformed_num] * king_arguments[i]) - arguments[transformed_num][i]);
+                check_boundaries(transformed_num, i);
             }
 
             temp_result = function(temp_arguments);
@@ -190,6 +191,7 @@ namespace War_strategy_optimization
             {
                 temp_arguments[i] = arguments[transformed_num][i]  + (2*p*(king_arguments[i] - random_soldier[i]))
                     + (rand.NextDouble() * weights[transformed_num]) * (commander_arguments[i] - arguments[transformed_num][i]);
+                check_boundaries(transformed_num, i);
             }
 
             temp_result = function(temp_arguments);
@@ -232,6 +234,19 @@ namespace War_strategy_optimization
             }
         }
 
+        void check_boundaries(int transformed_num, int dimension)
+        {
+            if (arguments[transformed_num][dimension] < lower_limit[dimension])
+            {
+                arguments[transformed_num][dimension] = lower_limit[dimension];
+            }
+
+            else if (arguments[transformed_num][dimension] > upper_limit[dimension])
+            {
+                arguments[transformed_num][dimension] = upper_limit[dimension];
+            }
+        }
+
         void relocating_the_weak()
         {
             Random rand = new Random();
@@ -247,6 +262,7 @@ namespace War_strategy_optimization
             for (int i=0; i<n_dimensions; i++)
             {
                 arguments[the_weakest][i] = (rand.NextDouble() - 1) * (arguments[the_weakest][i] - median(i) + king_arguments[i]);
+                check_boundaries(the_weakest, i);
             }
 
             results[the_weakest] = function(arguments[the_weakest]);
