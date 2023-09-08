@@ -47,7 +47,7 @@ namespace War_strategy_optimization
 
         public int NumberOfEvaluationFitnessFunction => n_of_calls;
 
-        public WSO(int n_iterations, int n_population, int n_dimensions, tested_function f, double[] upper_lim, double[] lower_lim, double p_param = 0.5, double alpha_param = 2)
+        public WSO(int n_iterations, int n_population, int n_dimensions, tested_function f, double p_param = 0.5, double alpha_param = 2)
         {
             this.n_iterations = n_iterations;
             this.n_population = n_population;
@@ -73,12 +73,6 @@ namespace War_strategy_optimization
                 ranks[i] = 1;
                 weights[i] = 1;
             }
-            for (int i = 0; i < n_dimensions; i++)
-            {
-                lower_limit[i] = lower_lim[i];
-                upper_limit[i] = upper_lim[i];
-            }
-
         }
 
         double function(double[] x)
@@ -87,6 +81,14 @@ namespace War_strategy_optimization
             return f(x);
         }
 
+        public void limit_setter(double[] ll, double[] ul)
+        {
+            for(int i=0; i<n_dimensions; i++)
+            {
+                lower_limit[i] = ll[i];
+                upper_limit[i] = ul[i];
+            }
+        }
 
         bool should_it_be_replaced(int i)
         {
@@ -165,17 +167,6 @@ namespace War_strategy_optimization
             {
                 temp_arguments[i] = arguments[transformed_num][i] + (2 * p * (commander_arguments[i] - king_arguments[i]))
                 + rand.NextDouble() * ((weights[transformed_num] * king_arguments[i]) - arguments[transformed_num][i]);
-
-                if (temp_arguments[i] > upper_limit[i])
-                {
-                    temp_arguments[i] = upper_limit[i];
-                }
-
-                if (temp_arguments[i] < lower_limit[i])
-                {
-                    temp_arguments[i] = lower_limit[i];
-                }
-
             }
 
             temp_result = function(temp_arguments);

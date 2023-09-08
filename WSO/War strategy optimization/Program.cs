@@ -162,8 +162,8 @@ namespace War_strategy_optimization
 
             setting_limits(ref upper_limit, ref lower_limit, dimensions[d]);
 
-            WSO test = new WSO(iterations[3], population[2], dimensions[d], Rastrigin_function, upper_limit, lower_limit);
-
+            WSO test = new WSO(iterations[3], population[2], dimensions[d], Rastrigin_function);
+            test.limit_setter(lower_limit, upper_limit);
             test.Solve();
 
             //for(int a=0; a <5; a++)
