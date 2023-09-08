@@ -197,6 +197,7 @@ namespace War_strategy_optimization
                 temp_arguments[i] = arguments[transformed_num][i]  + (2*p*(king_arguments[i] - random_soldier[i]))
                     + (rand.NextDouble() * weights[transformed_num]) * (commander_arguments[i] - arguments[transformed_num][i]);
 
+
                 if (temp_arguments[i] > upper_limit[i])
                 {
                     temp_arguments[i] = upper_limit[i];
