@@ -128,10 +128,7 @@ namespace War_strategy_optimization
                 replacing(i);
             }
 
-            for(int i=0; i<n_population; i++)
-            {
-                displaying_in_console(i);
-            }
+
             current_iteration++;
         }
 
@@ -199,6 +196,17 @@ namespace War_strategy_optimization
             {
                 temp_arguments[i] = arguments[transformed_num][i]  + (2*p*(king_arguments[i] - random_soldier[i]))
                     + (rand.NextDouble() * weights[transformed_num]) * (commander_arguments[i] - arguments[transformed_num][i]);
+
+                if (temp_arguments[i] > upper_limit[i])
+                {
+                    temp_arguments[i] = upper_limit[i];
+                }
+
+                if (temp_arguments[i] < lower_limit[i])
+                {
+                    temp_arguments[i] = lower_limit[i];
+                }
+
             }
 
             temp_result = function(temp_arguments);
@@ -255,10 +263,20 @@ namespace War_strategy_optimization
 
             for (int i=0; i<n_dimensions; i++)
             {
-                arguments[the_weakest][i] = (rand.NextDouble() - 1) * (arguments[the_weakest][i] - median(i) + king_arguments[i]);
+                temp_arguments[i] = (rand.NextDouble() - 1) * (arguments[the_weakest][i] - median(i) + king_arguments[i]);
+                if (temp_arguments[i] > upper_limit[i])
+                {
+                    temp_arguments[i] = upper_limit[i];
+                }
+
+                if (temp_arguments[i] < lower_limit[i])
+                {
+                    temp_arguments[i] = lower_limit[i];
+                }
             }
 
-            results[the_weakest] = function(arguments[the_weakest]);
+            temp_result = function(temp_arguments);
+            replacing(the_weakest);
 
         }
         public void SaveToFileStateOfAlghoritm()
