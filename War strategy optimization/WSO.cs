@@ -212,10 +212,8 @@ namespace War_strategy_optimization
 
             temp_result = function(temp_arguments);
 
-            if (should_it_be_replaced(transformed_num))
-            {
+
                 replacing(transformed_num);
-            }
         }
 
         double median(int i) // funckja do znajdowania mediany argumentow dla konkretnego wymiaru
